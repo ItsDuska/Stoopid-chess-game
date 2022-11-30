@@ -18,11 +18,12 @@ class Lauta():
             [(0, -1), (-1, 0), (0, 1), (1, 0)],  # torni
             [(-1, 2), (1, 2), (1, -2), (-1, -2), (2, 1), (2, -1), (-2, 1), (-2, -1)]]  # hevonen
 
-        self.vuoro = 0  # 0 = alaspäin    1 = ylöspäin
+        self.vuoro = 0  # 0 = valkone    1 = musta
         self.vihollinen = ["S", "K", "Q", "L", "T", "H"]
         self.oma = ["s", "k", "q", "l", "t", "h"]
         self.nappulat = [{"s": 1, "k": 2, "q": 3, "l": 4, "t": 5, "h": 6}, {
             "S": 0, "K": 2, "Q": 3, "L": 4, "T": 5, "H": 6}]
+
         self.sotilaan_syönti_pos = [[(-1, 1), (1, 1)],  # Sotilas 1 (Syö alas)
                                     [(-1, -1), (1, -1)]]  # Sotilas 2 (Syö ylös) -1, -1
         self.kuvat = {"q": "ValkoinenKuningatar.png", "Q": "MustaKuningatar.png", "s": "ValkoinenSotilas.png", "S": "MustaSotilas.png",
@@ -31,7 +32,6 @@ class Lauta():
         self.näytönKoko = näyttö.get_size()
         self.GREEN = (0, 128, 10, 100)
         self.klikattu = False
-        self.varmistus = False
         self.näyttö = näyttö
         self.ruutuKoko = int(self.näytönKoko[0]/8)
         self.lauta = self.Luo_lauta()
@@ -40,13 +40,13 @@ class Lauta():
         self.fontti = pygame.font.SysFont('Arial', 100)
         self.tausta = pygame.image.load(
             os.path.join("ShakkiKuvat", "ShakkiLauta.png")).convert_alpha()
-        self.tausta = pygame.transform.scale(self.tausta,self.näytönKoko)
+        self.tausta = pygame.transform.scale(self.tausta, self.näytönKoko)
         #
         #
-        self.onBotti = False
+        self.onBotti = True
         #
         #
-        self.minMax = MinMaxNuts(self.lauta)
+        self.minMax = MinMaxNuts()
 
     def Luo_lauta(self):
         # Isolla on musta
@@ -81,7 +81,8 @@ class Lauta():
         if not self.klikattu:
             return
         pos = pygame.mouse.get_pos()
-        self.näyttö.blit(self.HiiriKuva, (pos[0]-int(self.ruutuKoko/2), pos[1]-int(self.ruutuKoko/2)))
+        self.näyttö.blit(
+            self.HiiriKuva, (pos[0]-int(self.ruutuKoko/2), pos[1]-int(self.ruutuKoko/2)))
 
     def Lisää_surface(self, väri):
         surface = pygame.Surface(self.näytönKoko, pygame.SRCALPHA)
@@ -91,11 +92,12 @@ class Lauta():
     def HighlightRuudut(self):
         if not self.klikattu:
             return
-        self.näyttö.blit(self.omaLaatikko, (self.xx*self.ruutuKoko, self.yy*self.ruutuKoko))
+        self.näyttö.blit(self.omaLaatikko,
+                         (self.xx*self.ruutuKoko, self.yy*self.ruutuKoko))
         for ruutu in range(len(self.mahdolliset_paikat)):
             self.näyttö.blit(
-                self.laatikot[ruutu], (self.mahdolliset_paikat[ruutu][0]*self.ruutuKoko, 
-                self.mahdolliset_paikat[ruutu][1]*self.ruutuKoko))
+                self.laatikot[ruutu], (self.mahdolliset_paikat[ruutu][0]*self.ruutuKoko,
+                                       self.mahdolliset_paikat[ruutu][1]*self.ruutuKoko))
 
     def Pyöritä_kaikki(self):
         self.näyttö.blit(self.tausta, (0, 0))
@@ -130,8 +132,8 @@ class Lauta():
         self.Päivitä_lauta()
         self.HiiriKuva = pygame.image.load(
             os.path.join("ShakkiKuvat", self.kuvat[self.nappula])).convert_alpha()
-        self.HiiriKuva = pygame.transform.scale(self.HiiriKuva,(self.ruutuKoko,self.ruutuKoko))
-        print(self.vihollinen)
+        self.HiiriKuva = pygame.transform.scale(
+            self.HiiriKuva, (self.ruutuKoko, self.ruutuKoko))
 
     def Check_winning(self):
         if self.klikattu:
@@ -145,9 +147,9 @@ class Lauta():
         self.näyttö.blit(self.tekstijuttu, (50, 340))
 
     def Check_enmy_or_own(self, x, y):
-        if self.lauta[y][x] in self.vihollinen:
+        if self.lauta[y][x] in self.vihollinen[0]:
             return 1
-        elif self.lauta[y][x] in self.oma:
+        if self.lauta[y][x] in self.oma:
             return 2
         return 0
 
@@ -165,21 +167,20 @@ class Lauta():
                     self.mahdolliset_paikat.append((newX, newY))
                     if not onkoBotti:
                         self.Lisää_surface(self.GREEN)
-                    if ruudunTilanne == 1:
+                    if ruudunTilanne != 0:
                         break
                 else:
                     break
         # sotilas
         elif nappulat[nappula] in [0, 1]:
+            # Normaali liikkumine eteen
             if self.Check_enmy_or_own(x+xx, y+yy) == 0:
                 self.mahdolliset_paikat.append((x+xx, y+yy))
                 if not onkoBotti:
                     self.Lisää_surface(self.GREEN)
             # syönti paikat
             for suunta in self.sotilaan_syönti_pos[self.vuoro]:
-                print(suunta)
                 syönti = [x-suunta[0], y-suunta[1]]
-                print(syönti)
                 if not self.Is_within_bounds(syönti[0], syönti[1]):
                     continue
                 if self.Check_enmy_or_own(syönti[0], syönti[1]) == 1:
@@ -200,19 +201,19 @@ class Lauta():
         xx, yy = x // self.ruutuKoko, y // self.ruutuKoko
         self.klikattu = False
         if (xx, yy) in self.mahdolliset_paikat:
-            self.laitaNappula(xx, yy)
+            self.laitaNappula(xx, yy, self.xx, self.yy)
         else:
             self.lauta[self.yy][self.xx] = self.nappula
             self.Päivitä_lauta()
 
-    def laitaNappula(self, x, y):
+    def laitaNappula(self, uusiX, uusiY, vanhaX, VanhaY):
         self.laatikot = []
-        self.lauta[y][x] = self.nappula
-        self.lauta[self.yy][self.xx] = " "
+        self.lauta[uusiY][uusiX] = self.nappula
+        self.lauta[VanhaY][vanhaX] = " "
         self.mahdolliset_paikat.clear()
         self.Päivitä_lauta()
         self.vuoro = 0 if self.vuoro == 1 else 1
-        print(self.vuoro)
+        # print(self.vuoro)
         self.vihollinen = ["s", "k", "q", "l", "t", "h"] if self.vuoro == 1 else [
             ["S", "K", "Q", "L", "T", "H"]]
         self.oma = ["S", "K", "Q", "L", "T", "H"] if self.vuoro == 1 else [
@@ -232,24 +233,22 @@ class Lauta():
                     self.Check_liikkuminen(
                         self.lauta[y][x], self.nappulat[self.vuoro], x, y, pos[0], pos[1], True)
                     if len(self.mahdolliset_paikat) != 0:
-                        kaikkiPaikat.extend(self.mahdolliset_paikat)
+                        kaikkiPaikat.append([(x, y)])
+                        kaikkiPaikat.append(
+                            self.mahdolliset_paikat)
+                    # print(kaikkiPaikat)
                     self.mahdolliset_paikat = []
-                    # extend
-        print(kaikkiPaikat)
-        return kaikkiPaikat
+        return kaikkiPaikat  # Eka siirto on index 1 ja seuraava 3 eli kerrot kahdella. index 0 ja 2... on alkuperänen nappula cords
 
     def BottiKämä(self):
         if not (self.vuoro == 1 and self.onBotti):
             return
         kaikkiPaikat = self.katsoJokaisenNappulanPaikat()
-
-        self.minMax.update(self.lauta, kaikkiPaikat)
         point = self.minMax.minimax(
-            0, 0, True, self.minMax.getValueList(), self.minMax.MIN, self.minMax.MAX)
-
-        print(point, self.minMax.index)
+            3, 0, True, self.minMax.getValueList(self.lauta, kaikkiPaikat), self.minMax.MIN, self.minMax.MAX)
 
         self.nappula = self.GetNappula(
-            kaikkiPaikat[self.minMax.index][1], kaikkiPaikat[self.minMax.index][0])
+            kaikkiPaikat[self.minMax.index-1][0][0], kaikkiPaikat[self.minMax.index-1][0][1])
+
         self.laitaNappula(
-            kaikkiPaikat[self.minMax.index][0], kaikkiPaikat[self.minMax.index][1])
+            kaikkiPaikat[self.minMax.index][0][0], kaikkiPaikat[self.minMax.index][0][1], kaikkiPaikat[self.minMax.index-1][0][0], kaikkiPaikat[self.minMax.index-1][0][1])

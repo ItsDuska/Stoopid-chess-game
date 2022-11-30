@@ -1,7 +1,7 @@
 import pygame
 from Shakki_moottori import Lauta
 
-näytönKoko = (600,600)
+näytönKoko = (800, 800)
 pygame.init()
 näyttö = pygame.display.set_mode(näytönKoko)
 clock = pygame.time.Clock()
@@ -33,5 +33,5 @@ while päällä:
     pygame.display.update()  # update display
 
     # TO DO
-    
+
     # -AI botille (Käy läpi jokaisen mahdollisen liikkeen ja vetää niistä randomilla yhe (voi olla että yrittää ottaa parheiden joukosta yhden.))

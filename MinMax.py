@@ -1,19 +1,12 @@
 class MinMaxNuts:
-    def __init__(self, lauta, liikkeet=[]) -> None:
-        self.lauta = lauta
-        self.liikkeet = liikkeet
+    def __init__(self) -> None:
         self.MAX, self.MIN = 1_000, -1_000
-        self.index = None
-
-    def update(self, lauta, liikkeet):
-        self.lauta = lauta
-        self.liikkeet = liikkeet
+        self.index = 1
 
     def minimax(self, depth, nodeIndex, maximizingPlayer,
                 values, alpha, beta):
         if depth == 0:
-            self.index = nodeIndex
-            print(nodeIndex)
+            self.index += 2
             return values[nodeIndex]
         if maximizingPlayer:
             best = self.MIN
@@ -42,23 +35,24 @@ class MinMaxNuts:
         if (piece == " "):
             return 0
         value = 0
-        if piece == "P" or piece == "p":
+        if piece == "S" or piece == "s":
             value = 10
-        elif piece == "N" or piece == "n":
+        elif piece == "L" or piece == "l":
             value = 30
-        elif piece == "B" or piece == "b":
-            value = 30
-        elif piece == "R" or piece == "r":
+        elif piece == "H" or piece == "h":
+            value = 60
+        elif piece == "T" or piece == "t":
             value = 50
         elif piece == "Q" or piece == "q":
-            value = 90
+            value = 100
         elif piece == 'K' or piece == 'k':
-            value = 900
+            value = 200
         return value
 
-    def getValueList(self):
+    def getValueList(self, lauta, liikkeet):
+        self.index = 1
         valList = []
-        for vector in self.liikkeet:
+        for position in range(1, len(liikkeet), 2):
             valList.append(self.getPieceValue(
-                self.lauta[vector[1]][vector[0]]))
+                lauta[liikkeet[position][0][0]][liikkeet[position][0][0]]))
         return valList
