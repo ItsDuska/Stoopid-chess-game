@@ -212,7 +212,7 @@ class Lauta():
             return
         kaikkiPaikat = self.katsoJokaisenNappulanPaikat()
         point = self.minMax.minimax(
-            2, 0, False, self.minMax.getValueList(self.lauta, kaikkiPaikat), self.minMax.MIN, self.minMax.MAX)
+            3, 0, True, self.minMax.getValueList(self.lauta, kaikkiPaikat), self.minMax.MIN, self.minMax.MAX)
 
         self.nappula = self.GetNappula(
             kaikkiPaikat[self.minMax.index-1][0][0], kaikkiPaikat[self.minMax.index-1][0][1])
