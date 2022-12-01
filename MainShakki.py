@@ -1,7 +1,7 @@
 import pygame
 from Shakki_moottori import Lauta
 
-näytönKoko = (800, 800)
+näytönKoko = (600, 600)
 pygame.init()
 näyttö = pygame.display.set_mode(näytönKoko)
 clock = pygame.time.Clock()
