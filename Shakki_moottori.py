@@ -36,6 +36,7 @@ class Lauta():
         self.näyttö = näyttö
         self.ruutuKoko = int(self.näytönKoko[0]/8)
         self.lauta = self.Luo_lauta()
+        self.liikkeet = Liikkeet(self.näyttö,self.ruutuKoko)
         self.nappulaSprites = pygame.sprite.Group()
 
         self.render = Render(self.näyttö, self.ruutuKoko)
@@ -117,47 +118,6 @@ class Lauta():
             return 2
         return 0
 
-    # xx ja yy on klikatun nappulan cordinaatti
-    def Check_liikkuminen(self, nappula, nappulat, x, y, xx, yy, onkoBotti):
-        # Torni, kuningatar, lähetti
-        if nappulat[nappula] in [3, 4, 5]:
-            for suunta in range(1, 9):
-                newX, newY = x+xx*suunta, y+yy*suunta
-                if not self.Is_within_bounds(newX, newY):
-                    break
-                # Onko ruudukko tyhjä vai onko siinä musta tai valkoinen
-                ruudunTilanne = self.Check_enmy_or_own(newX, newY)
-                if ruudunTilanne == 0 or ruudunTilanne == 1:
-                    self.mahdolliset_paikat.append((newX, newY))
-                    if not onkoBotti:
-                        self.render.LisääHighlightedRuutu(self.GREEN)
-                    if ruudunTilanne != 0:
-                        break
-                else:
-                    break
-        # sotilas
-        elif nappulat[nappula] in [0, 1]:
-            # Normaali liikkumine eteen
-            if self.Check_enmy_or_own(x+xx, y+yy) == 0:
-                self.mahdolliset_paikat.append((x+xx, y+yy))
-                if not onkoBotti:
-                    self.render.LisääHighlightedRuutu(self.GREEN)
-            # syönti paikat
-            for suunta in self.sotilaan_syönti_pos[self.vuoro]:
-                syönti = [x-suunta[0], y-suunta[1]]
-                if not self.Is_within_bounds(syönti[0], syönti[1]):
-                    continue
-                if self.Check_enmy_or_own(syönti[0], syönti[1]) == 1:
-                    self.mahdolliset_paikat.append((syönti[0], syönti[1]))
-                    if not onkoBotti:
-                        self.render.LisääHighlightedRuutu(self.GREEN)
-        # kunkku + hevonen
-        elif nappulat[nappula] in [2, 6]:
-            if self.Check_enmy_or_own(x+xx, y+yy) in [0, 1]:
-                self.mahdolliset_paikat.append((x+xx, y+yy))
-                if not onkoBotti:
-                    self.render.LisääHighlightedRuutu(self.GREEN)
-
     def GetNappula(self, x, y):
         return self.lauta[y][x]
 
@@ -171,7 +131,7 @@ class Lauta():
             self.Päivitä_lauta()
 
     def laitaNappula(self, uusiX, uusiY, vanhaX, VanhaY):
-        self.render.laatikot = []
+        self.liikkeet.highlightCells.laatikot = []
         self.lauta[uusiY][uusiX] = self.nappula
         self.lauta[VanhaY][vanhaX] = " "
         self.mahdolliset_paikat.clear()
