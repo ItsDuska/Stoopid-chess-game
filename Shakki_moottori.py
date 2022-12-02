@@ -2,6 +2,7 @@ import pygame
 import os
 from MinMax import MinMaxNuts
 from Render import Render
+from NappuloidenLiikkeet import Liikkeet
 pygame.font.init()
 
 
@@ -29,7 +30,6 @@ class Lauta():
                       "k": "ValkoinenKunkku.png", "K": "MustaKunkku.png", "l": "ValkoinenLahetti.png", "L": "MustaLahetti.png", "t": "ValkoinenTorni.png",
                       "T": "MustaTorni.png", "h": "ValkoinenHevonen.png", "H": "MustaHevonen.png"}
         self.näytönKoko = näyttö.get_size()
-        self.GREEN = (0, 128, 10, 100)
         self.vanhaX, self.vanhaY = 0, 0
         self.onBotti = True
         self.klikattu = False
@@ -75,13 +75,10 @@ class Lauta():
         self.Check_winning()
         self.BottiKämä()
         self.render.drawBG()
-        self.render.HighlightRuudut(
+        self.render.h.HighlightRuudut(
             self.klikattu, self.vanhaX, self.vanhaY, self.mahdolliset_paikat)
         self.render.renderNappulaOnHiiri(self.klikattu)
         self.nappulaSprites.draw(self.näyttö)
-
-    def Is_within_bounds(self, x, y):
-        return x >= 0 and x < 8 and y >= 0 and y < 8
 
     def Click(self, x, y):
         self.mahdolliset_paikat = []
@@ -174,7 +171,7 @@ class Lauta():
             self.Päivitä_lauta()
 
     def laitaNappula(self, uusiX, uusiY, vanhaX, VanhaY):
-        self.render.laatikko = []
+        self.render.laatikot = []
         self.lauta[uusiY][uusiX] = self.nappula
         self.lauta[VanhaY][vanhaX] = " "
         self.mahdolliset_paikat.clear()
@@ -212,10 +209,10 @@ class Lauta():
             return
         kaikkiPaikat = self.katsoJokaisenNappulanPaikat()
         point = self.minMax.minimax(
-            3, 0, True, self.minMax.getValueList(self.lauta, kaikkiPaikat), self.minMax.MIN, self.minMax.MAX)
-
+            2, 0, True, self.minMax.getValueList(self.lauta, kaikkiPaikat), self.minMax.MIN, self.minMax.MAX)
+        #print(point)
         self.nappula = self.GetNappula(
             kaikkiPaikat[self.minMax.index-1][0][0], kaikkiPaikat[self.minMax.index-1][0][1])
-
+        print(self.minMax.index)
         self.laitaNappula(
             kaikkiPaikat[self.minMax.index][0][0], kaikkiPaikat[self.minMax.index][0][1], kaikkiPaikat[self.minMax.index-1][0][0], kaikkiPaikat[self.minMax.index-1][0][1])
