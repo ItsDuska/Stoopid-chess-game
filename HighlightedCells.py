@@ -1,8 +1,8 @@
-#Tänne se uus class
 import pygame
 
+
 class HighlightedCellsRender:
-    def __init__(self,näyttö,ruutuKoko) -> None:
+    def __init__(self, näyttö, ruutuKoko) -> None:
         self.laatikot = []
         self.näyttö = näyttö
         self.ruutuKoko = ruutuKoko
@@ -14,7 +14,7 @@ class HighlightedCellsRender:
         pygame.draw.rect(surface, väri, (0, 0, self.ruutuKoko, self.ruutuKoko))
         self.laatikot.append(surface)
 
-    def HighlightRuudut(self, klikattu,pos, mahdollisetPaikat):
+    def HighlightRuudut(self, klikattu, pos, mahdollisetPaikat):
         if not klikattu:
             return
         pygame.draw.rect(self.valitunNappulanLaatikko, (255, 255,
@@ -22,5 +22,6 @@ class HighlightedCellsRender:
         self.näyttö.blit(self.valitunNappulanLaatikko,
                          (pos[0]*self.ruutuKoko, pos[1]*self.ruutuKoko))
         for index, ruutu in enumerate(mahdollisetPaikat):
+            print(self.laatikot, index)
             self.näyttö.blit(
                 self.laatikot[index], (ruutu[0]*self.ruutuKoko, ruutu[1]*self.ruutuKoko))

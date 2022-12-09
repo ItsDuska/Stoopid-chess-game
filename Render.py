@@ -7,8 +7,7 @@ class Render:
     def __init__(self, näyttö, ruutuKoko) -> None:
         self.näyttö = näyttö
         self.ruutuKoko = ruutuKoko
-        self.tausta = pygame.image.load(os.path.join(
-            "ShakkiKuvat", "ShakkiLauta.png")).convert_alpha()
+        self.tausta = pygame.image.load(os.path.join("ShakkiKuvat", "ShakkiLauta.png")).convert_alpha()
         self.tausta = pygame.transform.scale(
             self.tausta, self.näyttö.get_size())
 

@@ -3,7 +3,6 @@ class MinMaxNuts:
         self.MAX, self.MIN = 1_000, -1_000
         self.index = 1
 
-    
     def minimax(self, depth, nodeIndex, maximizingPlayer,
                 values, alpha, beta):
         if depth == 0:
@@ -31,9 +30,6 @@ class MinMaxNuts:
                 if beta <= alpha:
                     break
             return best
-    
-   
-
 
     def getPieceValue(self, piece):
         if (piece == " "):
@@ -53,15 +49,15 @@ class MinMaxNuts:
             value = 200
         return value
 
-    def getPointsByLocation(self,y,x):
+    def getPointsByLocation(self, y, x):
         return y*10
 
     def getValueList(self, lauta, liikkeet):
-        
+
         self.index = 1
         valList = []
         for position in range(1, len(liikkeet), 2):
             valList.append(self.getPieceValue(
-                lauta[liikkeet[position][0][1]][liikkeet[position][0][0]])+self.getPointsByLocation(liikkeet[position][0][1],liikkeet[position][0][0]))
-            #self.getPointsByLocation(liikkeet[position][0][1],liikkeet[position][0][0])
+                lauta[liikkeet[position][0][1]][liikkeet[position][0][0]])+self.getPointsByLocation(liikkeet[position][0][1], liikkeet[position][0][0]))
+            # self.getPointsByLocation(liikkeet[position][0][1],liikkeet[position][0][0])
         return valList

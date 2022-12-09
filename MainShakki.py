@@ -25,9 +25,9 @@ while päällä:
             if pygame.mouse.get_pressed()[0]:
                 pos = pygame.mouse.get_pos()
                 if not lauta.klikattu:
-                    lauta.Click(pos[0], pos[1])
+                    lauta.Click(pos)
                 else:
-                    lauta.Syö(pos[0], pos[1])
+                    lauta.Syö(pos)
 
     lauta.Pyöritä_kaikki()
     pygame.display.update()  # update display
